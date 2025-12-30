@@ -1,0 +1,22 @@
+[
+  {"german": "der", "spanish": "el", "word_class": "article", "frequency_rank": 1},
+  {"german": "die", "spanish": "la", "word_class": "article", "frequency_rank": 2},
+  {"german": "das", "spanish": "el/lo", "word_class": "article", "frequency_rank": 3},
+  {"german": "ein", "spanish": "un", "word_class": "article", "frequency_rank": 4},
+  {"german": "eine", "spanish": "una", "word_class": "article", "frequency_rank": 5},
+  {"german": "sein", "spanish": "ser/estar", "word_class": "verb", "frequency_rank": 6},
+  {"german": "haben", "spanish": "tener/haber", "word_class": "verb", "frequency_rank": 7},
+  {"german": "werden", "spanish": "convertirse", "word_class": "verb", "frequency_rank": 8},
+  {"german": "können", "spanish": "poder", "word_class": "verb", "frequency_rank": 9},
+  {"german": "müssen", "spanish": "deber/tener que", "word_class": "verb", "frequency_rank": 10},
+  {"german": "sagen", "spanish": "decir", "word_class": "verb", "frequency_rank": 11},
+  {"german": "machen", "spanish": "hacer", "word_class": "verb", "frequency_rank": 12},
+  {"german": "geben", "spanish": "dar", "word_class": "verb", "frequency_rank": 13},
+  {"german": "kommen", "spanish": "venir", "word_class": "verb", "frequency_rank": 14},
+  {"german": "wollen", "spanish": "querer", "word_class": "verb", "frequency_rank": 15},
+  {"german": "gehen", "spanish": "ir", "word_class": "verb", "frequency_rank": 16},
+  {"german": "sehen", "spanish": "ver", "word_class": "verb", "frequency_rank": 17},
+  {"german": "nehmen", "spanish": "tomar", "word_class": "verb", "frequency_rank": 18},
+  {"german": "finden", "spanish": "encontrar", "word_class": "verb", "frequency_rank": 19},
+  {"german": "wissen", "spanish": "saber", "word_class": "verb", "frequency_rank": 20}
+]

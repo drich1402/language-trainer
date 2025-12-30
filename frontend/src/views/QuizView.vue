@@ -128,9 +128,20 @@
 
         <v-card v-else class="elevation-8">
           <v-card-text class="text-center pa-12">
-            <v-icon size="64" color="info">mdi-information</v-icon>
-            <h2 class="text-h5 mt-4">No vocabulary available</h2>
-            <p class="mt-2">Please check back later.</p>
+            <v-icon size="80" color="success">mdi-check-circle</v-icon>
+            <h2 class="text-h4 mt-4 mb-2">🎉 All Done!</h2>
+            <p class="text-h6 mb-4">
+              You've reviewed all available vocabulary.
+            </p>
+            <p class="text-body-1 text-medium-emphasis mb-6">
+              Come back later when more words are due for review, or practice
+              the ones you've learned!
+            </p>
+            <div class="d-flex justify-center gap-2">
+              <v-btn color="primary" size="large" @click="loadStats">
+                Refresh Stats
+              </v-btn>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -163,6 +174,22 @@ const stats = ref({
   words_due: 0,
 });
 
+// Audio feedback
+const successAudio = new Audio(
+  new URL("@/assets/success.wav", import.meta.url).href
+);
+const failAudio = new Audio(new URL("@/assets/fail.wav", import.meta.url).href);
+
+const playCorrectSound = () => {
+  successAudio.currentTime = 0;
+  successAudio.play();
+};
+
+const playIncorrectSound = () => {
+  failAudio.currentTime = 0;
+  failAudio.play();
+};
+
 const loadStats = async () => {
   try {
     const newStats = await api.getStats();
@@ -182,8 +209,13 @@ const loadNextQuestion = async () => {
     currentQuestion.value = await api.getNextReview();
     startTime.value = Date.now();
   } catch (error) {
-    console.error("Failed to load question:", error);
-    currentQuestion.value = null;
+    // 404 means no more vocabulary available - this is expected
+    if (error.response?.status === 404) {
+      currentQuestion.value = null;
+    } else {
+      console.error("Failed to load question:", error);
+      currentQuestion.value = null;
+    }
   } finally {
     loading.value = false;
   }
@@ -200,6 +232,14 @@ const selectAnswer = async (vocabId) => {
       responseTime
     );
     showResult.value = true;
+
+    // Play sound based on result
+    if (lastResult.value.correct) {
+      playCorrectSound();
+    } else {
+      playIncorrectSound();
+    }
+
     await loadStats();
   } catch (error) {
     console.error("Failed to submit answer:", error);
