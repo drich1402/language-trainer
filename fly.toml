@@ -11,9 +11,6 @@ primary_region = 'fra'
 [env]
   DATABASE_URL = "sqlite+aiosqlite:////data/vocab_trainer.db"
 
-[deploy]
-  release_command = "alembic upgrade head"
-
 [http_service]
   internal_port = 8000
   force_https = true

@@ -286,8 +286,8 @@ async def get_user_stats(
     
     words_learned = len([p for p in all_progress if p.times_correct >= 3])
     
-    current_time = datetime.utcnow().replace(tzinfo=timezone.utc)
-    words_due = len([p for p in all_progress if p.next_review <= current_time])
+    current_time = datetime.utcnow()
+    words_due = len([p for p in all_progress if p.next_review and p.next_review <= current_time])
     
     return UserStats(
         total_reviews=total_reviews,

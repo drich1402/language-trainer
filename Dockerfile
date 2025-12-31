@@ -10,7 +10,7 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ ./
-RUN npm run build
+RUN npm run build:prod
 
 # Stage 2: Backend with frontend static files
 FROM python:3.11-slim
