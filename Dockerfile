@@ -33,17 +33,13 @@ COPY --from=frontend-builder /frontend/dist /app/static
 # Create directory for SQLite database
 RUN mkdir -p /data
 
-# Create a startup script that serves both frontend and backend
+# Create startup script that initializes DB and starts server
 RUN echo '#!/bin/sh\n\
-    import uvicorn\n\
-    import os\n\
-    \n\
-    if __name__ == "__main__":\n\
-    port = int(os.getenv("PORT", 8000))\n\
-    uvicorn.run("main:app", host="0.0.0.0", port=port)\n\
-    ' > start.py
+    python init_db.py\n\
+    exec python -c "import uvicorn; import os; uvicorn.run('"'"'main:app'"'"', host='"'"'0.0.0.0'"'"', port=int(os.getenv('"'"'PORT'"'"', 8000)))"\n\
+    ' > /app/start.sh && chmod +x /app/start.sh
 
 # Expose port (fly.io sets PORT env variable)
 EXPOSE 8000
 
-CMD ["python", "-c", "import uvicorn; import os; uvicorn.run('main:app', host='0.0.0.0', port=int(os.getenv('PORT', 8000)))"]
+CMD ["/app/start.sh"]
