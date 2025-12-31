@@ -199,7 +199,7 @@ const speakSpanish = (text) => {
     window.speechSynthesis.cancel();
 
     // Replace "/" with a comma to create a natural pause
-    const textToSpeak = text.replace(/\//g, ', ');
+    const textToSpeak = text.replace(/\//g, ", ");
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = "es-ES"; // Spanish (Spain)

@@ -6,12 +6,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://vocab_user:vocab_password_2025@localhost:5432/vocab_trainer")
+# Support both PostgreSQL and SQLite
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./vocab_trainer.db")
+
+# SQLite specific settings
+connect_args = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
 
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,
     future=True,
+    connect_args=connect_args,
 )
 
 AsyncSessionLocal = async_sessionmaker(

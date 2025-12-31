@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 from routers import auth, vocab
@@ -54,19 +56,45 @@ async def add_cors_headers(request: Request, call_next):
 app.include_router(auth.router)
 app.include_router(vocab.router)
 
-# Root endpoint
-@app.get("/")
-async def root():
+# Health check endpoint (before static files)
+@app.get("/api/health")
+async def health_check():
+    return {"status": "healthy"}
+
+# API info endpoint
+@app.get("/api")
+async def api_root():
     return {
         "message": "German-Spanish Vocabulary Trainer API",
         "version": "1.0.0",
         "docs": "/docs"
     }
 
-# Health check endpoint
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
+# Mount static files (for production deployment with built frontend)
+static_dir = Path(__file__).parent / "static"
+if static_dir.exists():
+    app.mount("/assets", StaticFiles(directory=str(static_dir / "assets")), name="assets")
+    
+    # Serve index.html for SPA routes
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Don't serve static files for API routes
+        if full_path.startswith("api/") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            return {"error": "Not found"}
+        
+        index_file = static_dir / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+        return {"message": "Frontend not built"}
+else:
+    # Development mode without static files
+    @app.get("/")
+    async def root():
+        return {
+            "message": "German-Spanish Vocabulary Trainer API",
+            "version": "1.0.0",
+            "docs": "/docs"
+        }
 
 if __name__ == "__main__":
     import uvicorn
