@@ -84,6 +84,9 @@
                   @click="selectAnswer(option.vocab_id)"
                   class="text-h6 py-8"
                 >
+                  <v-icon start @click.stop="speakSpanish(option.spanish)"
+                    >mdi-volume-high</v-icon
+                  >
                   {{ option.spanish }}
                 </v-btn>
               </v-col>
@@ -188,6 +191,23 @@ const playCorrectSound = () => {
 const playIncorrectSound = () => {
   failAudio.currentTime = 0;
   failAudio.play();
+};
+
+const speakSpanish = (text) => {
+  if ("speechSynthesis" in window) {
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+
+    // Replace "/" with a comma to create a natural pause
+    const textToSpeak = text.replace(/\//g, ', ');
+
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = "es-ES"; // Spanish (Spain)
+    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.pitch = 1.0;
+
+    window.speechSynthesis.speak(utterance);
+  }
 };
 
 const loadStats = async () => {
