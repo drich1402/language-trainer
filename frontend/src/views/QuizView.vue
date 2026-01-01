@@ -99,11 +99,9 @@
               variant="tonal"
             >
               <template v-if="lastResult?.correct">
-                <v-icon size="large" class="mr-2">mdi-check-circle</v-icon>
                 <strong>Correct!</strong>
               </template>
               <template v-else>
-                <v-icon size="large" class="mr-2">mdi-close-circle</v-icon>
                 <strong>Wrong!</strong> The correct answer is:
                 <strong>{{ lastResult?.correct_answer }}</strong>
               </template>
@@ -228,6 +226,8 @@ const loadNextQuestion = async () => {
   try {
     currentQuestion.value = await api.getNextReview();
     startTime.value = Date.now();
+    // Update stats after loading a new question to reflect words_due change
+    await loadStats();
   } catch (error) {
     // 404 means no more vocabulary available - this is expected
     if (error.response?.status === 404) {
@@ -242,7 +242,6 @@ const loadNextQuestion = async () => {
 };
 
 const selectAnswer = async (vocabId) => {
-  selectedAnswer.value = vocabId;
   const responseTime = Date.now() - startTime.value;
 
   try {
@@ -251,6 +250,7 @@ const selectAnswer = async (vocabId) => {
       vocabId,
       responseTime
     );
+    selectedAnswer.value = vocabId;
     showResult.value = true;
 
     // Play sound based on result

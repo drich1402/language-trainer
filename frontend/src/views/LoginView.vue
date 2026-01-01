@@ -19,6 +19,8 @@
                 prepend-inner-icon="mdi-email"
                 variant="outlined"
                 class="mb-2"
+                autocomplete="email"
+                persistent-placeholder
               />
 
               <v-text-field
@@ -31,6 +33,8 @@
                 @click:append-inner="showPassword = !showPassword"
                 variant="outlined"
                 class="mb-4"
+                autocomplete="current-password"
+                persistent-placeholder
               />
 
               <v-alert v-if="error" type="error" class="mb-4">

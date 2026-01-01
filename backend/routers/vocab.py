@@ -88,7 +88,7 @@ async def get_next_review(
     """Get next vocabulary word for review with 4 multiple choice options."""
     
     # Get words that are due for review or haven't been seen yet
-    current_time = datetime.utcnow()
+    current_time = datetime.now(timezone.utc)
     
     # First, check for due reviews
     due_progress_query = (
@@ -236,14 +236,14 @@ async def submit_review(
     progress.interval_days = interval_days
     progress.ease_factor = ease_factor
     progress.repetitions = repetitions
-    progress.last_reviewed = datetime.utcnow()
-    progress.next_review = datetime.utcnow() + timedelta(days=interval_days)
+    progress.last_reviewed = datetime.now(timezone.utc)
+    progress.next_review = datetime.now(timezone.utc) + timedelta(days=interval_days)
     
     # If wrong, schedule sooner (between 3-20 questions)
     if not correct:
         # Estimate ~20 seconds per question, schedule between 1-7 minutes
         minutes_delay = random.randint(1, 7)
-        progress.next_review = datetime.utcnow() + timedelta(minutes=minutes_delay)
+        progress.next_review = datetime.now(timezone.utc) + timedelta(minutes=minutes_delay)
     
     # Record review session
     review_session = ReviewSession(
@@ -291,8 +291,17 @@ async def get_user_stats(
     
     words_learned = len([p for p in all_progress if p.times_correct >= 3])
     
-    current_time = datetime.utcnow()
+    current_time = datetime.now(timezone.utc)
     words_due = len([p for p in all_progress if p.next_review and p.next_review <= current_time])
+    
+    # Debug logging
+    print(f"DEBUG Stats - User: {current_user.id}")
+    print(f"  Total progress entries: {len(all_progress)}")
+    print(f"  Words learned (>=3 correct): {words_learned}")
+    print(f"  Words due: {words_due}")
+    print(f"  Current time: {current_time}")
+    for p in all_progress:
+        print(f"  Vocab {p.vocab_id}: times_correct={p.times_correct}, next_review={p.next_review}, due={p.next_review <= current_time if p.next_review else 'None'}")
     
     return UserStats(
         total_reviews=total_reviews,
