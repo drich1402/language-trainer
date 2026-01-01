@@ -110,8 +110,13 @@ async def get_next_review(
         vocab_result = await db.execute(
             select(Vocabulary).where(Vocabulary.id == progress.vocab_id)
         )
-        target_vocab = vocab_result.scalar_one()
-    else:
+        target_vocab = vocab_result.scalar_one_or_none()
+        
+        # If vocab was deleted (shouldn't happen), fall through to get unseen
+        if not target_vocab:
+            progress = None
+    
+    if not progress:
         # No due reviews, get a new word that hasn't been seen
         seen_vocab_ids_query = select(UserVocabularyProgress.vocab_id).where(
             UserVocabularyProgress.user_id == current_user.id
